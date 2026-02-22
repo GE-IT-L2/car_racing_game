@@ -1,9 +1,5 @@
 package model.Car;
 
-/**
- * LaneCar centralizes lane movement logic.
- * All cars that move between lanes must extend this class.
- */
 public abstract class LaneCar extends Car {
 
     protected static final int LEFT_LANE = 0;
@@ -12,13 +8,8 @@ public abstract class LaneCar extends Car {
 
     protected int currentLane;
 
-    public LaneCar(String color,
-                   double initSpeed,
-                   double maxSpeed,
-                   double acceleration) {
-
+    public LaneCar(String color, double initSpeed, double maxSpeed, double acceleration) {
         super(color, initSpeed, maxSpeed, acceleration);
-
         this.currentLane = CENTER_LANE;
         this.positionX = currentLane;
     }
@@ -39,7 +30,5 @@ public abstract class LaneCar extends Car {
         }
     }
 
-    public int getCurrentLane() {
-        return currentLane;
-    }
+    public int getCurrentLane() { return currentLane; }
 }

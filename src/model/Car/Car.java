@@ -2,8 +2,7 @@ package model.Car;
 
 public abstract class Car {
 
-    protected String color; // choix joueur (logique, pas graphique)
-
+    protected String color;
     protected double currentSpeed;
     protected double initSpeed;
     protected double maxSpeed;
@@ -11,7 +10,6 @@ public abstract class Car {
 
     protected double positionX;
     protected double positionY;
-
     protected double distanceTraveled;
     protected boolean alive;
 
@@ -21,17 +19,14 @@ public abstract class Car {
         this.currentSpeed = initSpeed;
         this.maxSpeed = maxSpeed;
         this.acceleration = acceleration;
-
         this.positionX = 0;
         this.positionY = 0;
         this.distanceTraveled = 0;
         this.alive = true;
     }
 
-
     public void update(double deltaTime) {
         if (!alive) return;
-
         increaseSpeed(deltaTime);
         move(deltaTime);
     }
@@ -39,10 +34,7 @@ public abstract class Car {
     protected void increaseSpeed(double deltaTime) {
         if (currentSpeed < maxSpeed) {
             currentSpeed += acceleration * deltaTime;
-
-            if (currentSpeed > maxSpeed) {
-                currentSpeed = maxSpeed;
-            }
+            if (currentSpeed > maxSpeed) currentSpeed = maxSpeed;
         }
     }
 
@@ -52,18 +44,9 @@ public abstract class Car {
         positionY += distance;
     }
 
-    public void collision() {
-        this.alive = false;
-    }
-
-    public boolean isAlive() {
-        return alive;
-    }
-
-    public int getScore() {
-        return (int) distanceTraveled;
-    }
-
+    public void collision() { this.alive = false; }
+    public boolean isAlive() { return alive; }
+    public int getScore() { return (int) distanceTraveled; }
     public void reset() {
         this.currentSpeed = initSpeed;
         this.positionX = 0;
@@ -72,27 +55,12 @@ public abstract class Car {
         this.alive = true;
     }
 
-    public String getColor() {
-        return color;
-    }
-
-    public double getCurrentSpeed() {
-        return currentSpeed;
-    }
-
-    public double getPositionX() {
-        return positionX;
-    }
-
-    public double getPositionY() {
-        return positionY;
-    }
-
-    public double getDistanceTraveled() {
-        return distanceTraveled;
-    }
+    public String getColor() { return color; }
+    public double getCurrentSpeed() { return currentSpeed; }
+    public double getPositionX() { return positionX; }
+    public double getPositionY() { return positionY; }
+    public double getDistanceTraveled() { return distanceTraveled; }
 
     public abstract void moveLeft();
-
     public abstract void moveRight();
 }
