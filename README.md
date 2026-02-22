@@ -16,4 +16,24 @@ Meanwhile, the compiled output files will be generated in the `bin` folder by de
 ## Dependency Management
 
 The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
-# jeu_de_course_de_voiture
+# car_racing_game
+
+------------------------------------------------------------------------------------------------------------------------------
+
+# Car Racing Game in Java
+
+## Overview
+
+This project is a **car racing game** developed in Java.  
+It supports different game modes: 
+
+1. **Solo** – endless race for a single player  
+2. **Two human players** – two players on the same computer  
+3. **One player vs AI** – a human player competes against a computer-controlled car  
+
+The game is built using **object-oriented programming**, with an abstract `Car` class and specialized classes for players and AI.
+
+---
+
+## Project Structure
+
