@@ -9,5 +9,13 @@ public class App {
 
         System.out.println("Player1 lane: " + p1.getCurrentLane());
         System.out.println("Player2 lane: " + p2.getCurrentLane());
+
+        // simulate updates
+        System.out.println("\nCar Status : \n");
+        for (int i = 0; i < 3; i++) {
+            p1.update(1.0);
+            p1.moveRight();
+            System.out.println(p1.getCarStatus());
+        }
     }
 }

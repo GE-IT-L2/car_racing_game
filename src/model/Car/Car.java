@@ -61,6 +61,13 @@ public abstract class Car {
     public double getPositionY() { return positionY; }
     public double getDistanceTraveled() { return distanceTraveled; }
 
+    public String getCarStatus() {
+       return "Color: " + color +
+           " | Speed: " + currentSpeed +
+           " | Distance: " + distanceTraveled +
+           " | Lane: " + positionX +
+           " | Alive: " + alive;
+    }
     public abstract void moveLeft();
     public abstract void moveRight();
 }
