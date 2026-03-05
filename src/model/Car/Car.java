@@ -1,4 +1,5 @@
 package model.Car;
+import model.Difficulty.*;
 
 /**
  * Classe abstraite représentant une voiture générique.
@@ -156,4 +157,15 @@ public abstract class Car {
 
     public abstract void moveLeft();
     public abstract void moveRight();
+
+    public void setInitSpeed(double speed) {
+        this.initSpeed = speed;
+        this.currentSpeed = speed;
+    }
+    public void setMaxSpeed(double speed) { 
+        this.maxSpeed = speed; 
+    }
+    public void setAcceleration(double acc) { 
+        this.acceleration = acc; 
+    }
 }
