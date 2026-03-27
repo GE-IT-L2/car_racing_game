@@ -1,4 +1,4 @@
-package model.Difficulty;
+package model.difficulty;
 public class Medium extends Difficulty {
 
    private double mobileObstacleThreshold;

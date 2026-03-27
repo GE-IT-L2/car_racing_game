@@ -1,4 +1,4 @@
-package model.Difficulty;
+package model.difficulty;
 
 public class Hard extends Difficulty {
     private boolean unpredictableObstacles;

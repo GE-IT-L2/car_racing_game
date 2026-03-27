@@ -1,4 +1,4 @@
-package model.Car;
+package model.car;
 
 /**
  * Classe abstraite représentant une voiture circulant sur des voies fixes.
@@ -13,6 +13,9 @@ public abstract class LaneCar extends Car {
     protected static final int LEFT_LANE = 0;
     protected static final int CENTER_LANE = 1;
     protected static final int RIGHT_LANE = 2;
+    
+    // Largeur de voie en pixels
+    protected static final double LANE_WIDTH = 800 / 3.0; // 267px par voie
 
     // Voie actuelle de la voiture
     protected int currentLane;
@@ -33,8 +36,7 @@ public abstract class LaneCar extends Car {
         this.currentLane = CENTER_LANE;
 
         // Synchronisation de la position horizontale avec la voie
-        // (Ici on suppose que positionX représente la voie)
-        this.positionX = currentLane;
+        this.positionX = CENTER_LANE * LANE_WIDTH + LANE_WIDTH / 2;
     }
 
     /**
@@ -47,7 +49,7 @@ public abstract class LaneCar extends Car {
         // Vérifie qu'on n'est pas déjà sur la voie la plus à gauche
         if (currentLane > LEFT_LANE) {
             currentLane--;           // Change la voie
-            positionX = currentLane; // Met à jour la position horizontale
+            updatePositionX();       // Met à jour la position horizontale
         }
     }
 
@@ -61,8 +63,15 @@ public abstract class LaneCar extends Car {
         // Vérifie qu'on n'est pas déjà sur la voie la plus à droite
         if (currentLane < RIGHT_LANE) {
             currentLane++;           // Change la voie
-            positionX = currentLane; // Met à jour la position horizontale
+            updatePositionX();       // Met à jour la position horizontale
         }
+    }
+    
+    /**
+     * Met à jour la position X en fonction de la voie actuelle
+     */
+    private void updatePositionX() {
+        this.positionX = currentLane * LANE_WIDTH + LANE_WIDTH / 2;
     }
 
     /**
@@ -72,5 +81,22 @@ public abstract class LaneCar extends Car {
      */
     public int getCurrentLane() {
         return currentLane;
+    }
+
+    /**
+     * Positionne la voiture sur une voie spécifique (0,1,2) et met à jour la X.
+     */
+    public void setLane(int lane) {
+        if (lane < LEFT_LANE) lane = LEFT_LANE;
+        if (lane > RIGHT_LANE) lane = RIGHT_LANE;
+        this.currentLane = lane;
+        updatePositionX();
+    }
+
+    /**
+     * Remet la voiture au centre de la piste.
+     */
+    public void resetLane() {
+        setLane(CENTER_LANE);
     }
 }

@@ -1,4 +1,4 @@
-package model.Difficulty;
+package model.difficulty;
 public class Easy extends Difficulty {
 
     public Easy() {

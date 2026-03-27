@@ -1,6 +1,6 @@
-package model.Difficulty;
+package model.difficulty;
 
-import model.Car.*;
+import model.car.*;
 
 public abstract class Difficulty {
     protected String name;

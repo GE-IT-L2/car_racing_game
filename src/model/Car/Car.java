@@ -1,5 +1,4 @@
-package model.Car;
-import model.Difficulty.*;
+package model.car;
 
 /**
  * Classe abstraite représentant une voiture générique.
@@ -101,7 +100,9 @@ public abstract class Car {
 
         // Mise à jour des métriques
         distanceTraveled += distance;
-        positionY += distance;
+
+        // La voiture reste à un y constant (effet de piste mobile via obstacles)
+        // positionY += distance; // retiré pour éviter que la voiture se déplace vers le bas
     }
 
     /**
@@ -158,6 +159,13 @@ public abstract class Car {
     public abstract void moveLeft();
     public abstract void moveRight();
 
+    public double getMaxSpeed() { return maxSpeed; }
+    public double getInitSpeed() { return initSpeed; }
+    public double getAcceleration() { return acceleration; }
+
+    public void setPositionX(double x) { this.positionX = x; }
+    public void setPositionY(double y) { this.positionY = y; }
+    
     public void setInitSpeed(double speed) {
         this.initSpeed = speed;
         this.currentSpeed = speed;
@@ -167,5 +175,16 @@ public abstract class Car {
     }
     public void setAcceleration(double acc) { 
         this.acceleration = acc; 
+    }
+    
+    public void setCurrentSpeed(double speed) {
+        this.currentSpeed = speed;
+    }
+
+    /**
+     * Accélère la voiture
+     */
+    public void accelerer() {
+        increaseSpeed(1.0 / 60.0); // Assume 60 FPS
     }
 }
