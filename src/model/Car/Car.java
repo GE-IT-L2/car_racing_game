@@ -65,27 +65,24 @@ public abstract class Car {
         // Si la voiture est détruite, elle ne bouge plus
         if (!alive) return;
 
-        // Augmente la vitesse progressivement
-        increaseSpeed(deltaTime);
-
-        // Déplace la voiture
+        // Déplace la voiture en termes de distance parcourue
         move(deltaTime);
     }
 
     /**
-     * Augmente la vitesse en fonction de l'accélération.
-     * 
-     * La vitesse est plafonnée à maxSpeed.
+     * Accélère la voiture progressivement (commande UP).
      */
-    protected void increaseSpeed(double deltaTime) {
-        if (currentSpeed < maxSpeed) {
-            currentSpeed += acceleration * deltaTime;
+    public void accelerer(double deltaTime) {
+        if (!alive) return;
+        currentSpeed = Math.min(maxSpeed, currentSpeed + acceleration * deltaTime);
+    }
 
-            // Sécurise le dépassement de vitesse max
-            if (currentSpeed > maxSpeed) {
-                currentSpeed = maxSpeed;
-            }
-        }
+    /**
+     * Freine la voiture (commande DOWN).
+     */
+    public void freiner(double deltaTime) {
+        if (!alive) return;
+        currentSpeed = Math.max(0, currentSpeed - acceleration * deltaTime * 1.5);
     }
 
     /**
@@ -182,9 +179,13 @@ public abstract class Car {
     }
 
     /**
-     * Accélère la voiture
+     * Accélère la voiture (moteur de contrôle manuel via deltaTime)
      */
     public void accelerer() {
-        increaseSpeed(1.0 / 60.0); // Assume 60 FPS
+        accelerer(1.0 / 60.0);
+    }
+
+    public void freiner() {
+        freiner(1.0 / 60.0);
     }
 }

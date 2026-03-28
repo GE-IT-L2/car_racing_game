@@ -20,6 +20,7 @@ public class GamePanel extends JPanel {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
     private static final int LANE_WIDTH = WIDTH / 3;
+    private static final int PLAYER_Y = HEIGHT - 130;
 
     private final Mode mode;
     private final Difficulty difficulty;
@@ -42,6 +43,18 @@ public class GamePanel extends JPanel {
     private boolean gameOver;
     private boolean countdownActive;
 
+    private boolean upPressed;
+    private boolean downPressed;
+    private boolean leftPressed;
+    private boolean rightPressed;
+
+    private boolean p2LeftPressed;
+    private boolean p2RightPressed;
+    private boolean p2UpPressed;
+    private boolean p2DownPressed;
+
+    private double worldScroll;
+
     private long lastFrameTime;
     private long obstacleTimer;
     private int countdownValue;
@@ -61,6 +74,13 @@ public class GamePanel extends JPanel {
         setBackground(getTerrainColor(terrain));
         setFocusable(true);
 
+        // Assure réception clavier après construction
+        addHierarchyListener(e -> {
+            if (isShowing()) {
+                requestFocusInWindow();
+            }
+        });
+
         obstacles = new ArrayList<>();
         random = new Random();
 
@@ -79,7 +99,7 @@ public class GamePanel extends JPanel {
         difficulty.applyToCar(player1);
         player1.reset();
         player1.resetLane();
-        player1.setPositionY(HEIGHT - 100);
+        player1.setPositionY(PLAYER_Y);
 
         if (mode != Mode.ONE_PLAYER) {
             boolean ai = mode == Mode.TWO_PLAYERS_AI;
@@ -87,13 +107,14 @@ public class GamePanel extends JPanel {
             difficulty.applyToCar(player2);
             player2.reset();
             player2.resetLane();
-            player2.setPositionY(HEIGHT - 200);
+            player2.setPositionY(PLAYER_Y);
         }
 
         running = false;
         paused = false;
         gameOver = false;
         obstacleTimer = 0;
+        worldScroll = 0;
     }
 
     private void startCountdown() {
@@ -132,35 +153,29 @@ public class GamePanel extends JPanel {
                 }
 
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_LEFT -> player1.moveLeft();
-                    case KeyEvent.VK_RIGHT -> player1.moveRight();
-                    case KeyEvent.VK_UP -> {
-                        double newSpeed = Math.min(player1.getMaxSpeed(), player1.getCurrentSpeed() + player1.getAcceleration() * 0.1);
-                        player1.setCurrentSpeed(newSpeed);
-                    }
-                    case KeyEvent.VK_DOWN -> {
-                        double newSpeed = Math.max(0, player1.getCurrentSpeed() - player1.getAcceleration() * 0.1);
-                        player1.setCurrentSpeed(newSpeed);
-                    }
+                    case KeyEvent.VK_LEFT -> leftPressed = true;
+                    case KeyEvent.VK_RIGHT -> rightPressed = true;
+                    case KeyEvent.VK_UP -> upPressed = true;
+                    case KeyEvent.VK_DOWN -> downPressed = true;
                     case KeyEvent.VK_P -> paused = !paused;
-                    case KeyEvent.VK_A -> {
-                        if (player2 != null) player2.moveLeft();
-                    }
-                    case KeyEvent.VK_D -> {
-                        if (player2 != null) player2.moveRight();
-                    }
-                    case KeyEvent.VK_W -> {
-                        if (player2 != null) {
-                            double newSpeed = Math.min(player2.getMaxSpeed(), player2.getCurrentSpeed() + player2.getAcceleration() * 0.1);
-                            player2.setCurrentSpeed(newSpeed);
-                        }
-                    }
-                    case KeyEvent.VK_S -> {
-                        if (player2 != null) {
-                            double newSpeed = Math.max(0, player2.getCurrentSpeed() - player2.getAcceleration() * 0.1);
-                            player2.setCurrentSpeed(newSpeed);
-                        }
-                    }
+                    case KeyEvent.VK_A -> p2LeftPressed = true;
+                    case KeyEvent.VK_D -> p2RightPressed = true;
+                    case KeyEvent.VK_W -> p2UpPressed = true;
+                    case KeyEvent.VK_S -> p2DownPressed = true;
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_LEFT -> leftPressed = false;
+                    case KeyEvent.VK_RIGHT -> rightPressed = false;
+                    case KeyEvent.VK_UP -> upPressed = false;
+                    case KeyEvent.VK_DOWN -> downPressed = false;
+                    case KeyEvent.VK_A -> p2LeftPressed = false;
+                    case KeyEvent.VK_D -> p2RightPressed = false;
+                    case KeyEvent.VK_W -> p2UpPressed = false;
+                    case KeyEvent.VK_S -> p2DownPressed = false;
                 }
             }
         });
@@ -181,8 +196,36 @@ public class GamePanel extends JPanel {
     }
 
     private void updateGame(double deltaTime) {
+        // Player 1 controls
+        if (upPressed) player1.accelerer(deltaTime);
+        if (downPressed) player1.freiner(deltaTime);
+        if (leftPressed) {
+            player1.moveLeft();
+            leftPressed = false;
+        }
+        if (rightPressed) {
+            player1.moveRight();
+            rightPressed = false;
+        }
+
+        // Player 2 controls (local)
+        if (player2 != null) {
+            if (p2UpPressed) player2.accelerer(deltaTime);
+            if (p2DownPressed) player2.freiner(deltaTime);
+            if (p2LeftPressed) {
+                player2.moveLeft();
+                p2LeftPressed = false;
+            }
+            if (p2RightPressed) {
+                player2.moveRight();
+                p2RightPressed = false;
+            }
+        }
+
         player1.update(deltaTime);
         if (player2 != null) player2.update(deltaTime);
+
+        worldScroll += player1.getCurrentSpeed() * deltaTime * 1.5;
 
         obstacleTimer += (long) (deltaTime * 1000);
         if (obstacleTimer >= difficulty.getObstacleFrequency()) {
@@ -193,7 +236,8 @@ public class GamePanel extends JPanel {
         Iterator<Obstacle> iterator = obstacles.iterator();
         while (iterator.hasNext()) {
             Obstacle obs = iterator.next();
-            obs.update(deltaTime);
+            double worldSpeed = 180 + player1.getCurrentSpeed() * 3;
+            obs.update(deltaTime, worldSpeed);
             if (obs.isOutOfBounds(HEIGHT)) {
                 iterator.remove();
                 score.ajouterPoints(10);
@@ -207,7 +251,6 @@ public class GamePanel extends JPanel {
             }
             if (player2 != null && checkCollision(player2, obs)) {
                 if (mode == Mode.TWO_PLAYERS_LOCAL || mode == Mode.TWO_PLAYERS_AI) {
-                    // En mode 2 joueurs, collision donne ralentissement temporaire
                     player2.setCurrentSpeed(player2.getCurrentSpeed() * 0.7);
                 }
                 if (mode == Mode.ONE_PLAYER) {
@@ -251,8 +294,8 @@ public class GamePanel extends JPanel {
     private boolean checkCollision(Car player, Obstacle obstacle) {
         double left = player.getPositionX() - 20;
         double right = player.getPositionX() + 20;
-        double top = player.getPositionY() - 40;
-        double bottom = player.getPositionY() + 40;
+        double top = PLAYER_Y - 40;
+        double bottom = PLAYER_Y + 40;
 
         double obsLeft = obstacle.getPositionX() - obstacle.getWidth() / 2.0;
         double obsRight = obstacle.getPositionX() + obstacle.getWidth() / 2.0;
@@ -302,7 +345,7 @@ public class GamePanel extends JPanel {
         // Moving lane lines
         g2.setColor(Color.YELLOW);
         g2.setStroke(new BasicStroke(3));
-        int offset = (int) (System.currentTimeMillis() / 50) % 80; // Moving effect
+        int offset = (int) (worldScroll % 80);
         for (int y = -20 - offset; y < HEIGHT; y += 80) {
             g2.drawLine(LANE_WIDTH, y, LANE_WIDTH, y + 40);
             g2.drawLine(LANE_WIDTH * 2, y, LANE_WIDTH * 2, y + 40);
@@ -317,7 +360,7 @@ public class GamePanel extends JPanel {
 
     private void drawPlayer(Graphics2D g2) {
         int x = (int) player1.getPositionX() - 20;
-        int y = (int) player1.getPositionY() - 40;
+        int y = PLAYER_Y - 40;
 
         // Car body
         g2.setColor(playerColor);
@@ -347,7 +390,7 @@ public class GamePanel extends JPanel {
 
     private void drawPlayer2(Graphics2D g2) {
         int x = (int) player2.getPositionX() - 20;
-        int y = (int) player2.getPositionY() - 40;
+        int y = PLAYER_Y - 40;
 
         // Car body
         g2.setColor(Color.RED);
@@ -400,6 +443,7 @@ public class GamePanel extends JPanel {
         g2.drawString("Vitesse: " + (int) player1.getCurrentSpeed(), 600, 30);
         g2.drawString("Difficulté: " + difficulty.getName(), 600, 60);
         g2.drawString("Terrain: " + terrain, 600, 90);
+        g2.drawString("Distance: " + (int) player1.getDistanceTraveled(), 600, 120);
         g2.drawString("P=Pause, M=Menu, Q=Quit", 20, 570);
     }
 
@@ -490,8 +534,8 @@ public class GamePanel extends JPanel {
             this.dx = mobile ? (new Random().nextBoolean() ? 40 : -40) : 0;
         }
 
-        public void update(double deltaTime) {
-            y += speedY * deltaTime;
+        public void update(double deltaTime, double worldSpeed) {
+            y += (speedY + worldSpeed) * deltaTime;
             if (mobile) {
                 x += dx * deltaTime;
                 if (x < width / 2.0) {
