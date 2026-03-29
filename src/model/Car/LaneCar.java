@@ -54,6 +54,19 @@ public abstract class LaneCar extends Car {
     }
 
     /**
+     * Déplace la voiture vers la gauche avec vérification des limites.
+     */
+    public void moveLeft(int laneWidth, int screenWidth) {
+        if (currentLane > LEFT_LANE) {
+            currentLane--;
+            updatePositionX();
+        }
+        // Vérifier aussi les limites de l'écran
+        if (positionX < 0) positionX = laneWidth / 2;
+        if (positionX > screenWidth) positionX = screenWidth - laneWidth / 2;
+    }
+
+    /**
      * Déplace la voiture vers la droite si possible.
      * 
      * La voiture ne peut pas dépasser la voie la plus à droite.
@@ -65,6 +78,19 @@ public abstract class LaneCar extends Car {
             currentLane++;           // Change la voie
             updatePositionX();       // Met à jour la position horizontale
         }
+    }
+
+    /**
+     * Déplace la voiture vers la droite avec vérification des limites.
+     */
+    public void moveRight(int laneWidth, int screenWidth) {
+        if (currentLane < RIGHT_LANE) {
+            currentLane++;
+            updatePositionX();
+        }
+        // Vérifier aussi les limites de l'écran
+        if (positionX < 0) positionX = laneWidth / 2;
+        if (positionX > screenWidth) positionX = screenWidth - laneWidth / 2;
     }
     
     /**
