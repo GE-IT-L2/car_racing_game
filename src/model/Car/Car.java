@@ -138,45 +138,32 @@ public abstract class Car {
         this.alive = true;
     }
 
-    // --- Getters ---
+    // --- Getters et Setters ---
 
     public String getColor() { return color; }
-
     public double getCurrentSpeed() { return currentSpeed; }
-
     public double getPositionX() { return positionX; }
-
     public double getPositionY() { return positionY; }
-
     public double getDistanceTraveled() { return distanceTraveled; }
-
-    // --- Méthodes abstraites ---
-    // Forcent les classes filles à implémenter la logique latérale
-
-    public abstract void moveLeft();
-    public abstract void moveRight();
-
     public double getMaxSpeed() { return maxSpeed; }
     public double getInitSpeed() { return initSpeed; }
     public double getAcceleration() { return acceleration; }
 
     public void setPositionX(double x) { this.positionX = x; }
     public void setPositionY(double y) { this.positionY = y; }
-    
-    public void setInitSpeed(double speed) {
-        this.initSpeed = speed;
-        this.currentSpeed = speed;
+    public void setInitSpeed(double speed) { 
+        this.initSpeed = speed; 
+        this.currentSpeed = speed; 
     }
-    public void setMaxSpeed(double speed) { 
-        this.maxSpeed = speed; 
-    }
-    public void setAcceleration(double acc) { 
-        this.acceleration = acc; 
-    }
-    
-    public void setCurrentSpeed(double speed) {
-        this.currentSpeed = speed;
-    }
+    public void setMaxSpeed(double speed) { this.maxSpeed = speed; }
+    public void setAcceleration(double accel) { this.acceleration = accel; }
+    public void setCurrentSpeed(double speed) { this.currentSpeed = speed; }
+
+    // --- Méthodes abstraites ---
+    // Forcent les classes filles à implémenter la logique latérale
+
+    public abstract void moveLeft();
+    public abstract void moveRight();
 
     /**
      * Accélère la voiture (moteur de contrôle manuel via deltaTime)

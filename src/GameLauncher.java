@@ -80,34 +80,34 @@ public class GameLauncher {
     }
     
     private static void launchClassicMode() {
+        // Lanceur ancien - non utilisé en v4.0
+        // Voir App.java pour les modes actuels
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("🏎️ RACING GAME v3.0 - Mode Classique");
+            JFrame frame = new JFrame("🏎️ RACING GAME v4.0 - Mode Classique");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setResizable(false);
             
-            RaceGamePanel gamePanel = new RaceGamePanel();
-            frame.add(gamePanel);
+            JLabel label = new JLabel("Démarrer par Main.java pour accéder au jeu complet v4.0");
+            frame.add(label);
             frame.pack();
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
-            frame.setFocusable(true);
-            gamePanel.requestFocus();
         });
     }
     
     private static void launchAdvancedMode() {
+        // Lanceur ancien - non utilisé en v4.0
+        // Voir App.java pour les modes actuels
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("🏎️ RACING GAME v3.0 - Mode Avancé ⭐");
+            JFrame frame = new JFrame("🏎️ RACING GAME v4.0 - Mode Avancé");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setResizable(false);
             
-            RaceGamePanelAdvanced gamePanel = new RaceGamePanelAdvanced();
-            frame.add(gamePanel);
+            JLabel label = new JLabel("Démarrer par Main.java pour accéder au jeu complet v4.0");
+            frame.add(label);
             frame.pack();
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
-            frame.setFocusable(true);
-            gamePanel.requestFocus();
         });
     }
 }

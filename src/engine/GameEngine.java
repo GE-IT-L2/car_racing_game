@@ -4,11 +4,13 @@ import model.car.*;
 import model.obstacle.Obstacle;
 import model.difficulty.Difficulty;
 import model.game.GameState;
+import model.game.Score;
+import model.game.DynamicSpeedSystem;
 import java.util.*;
 
 /**
  * Moteur du jeu : orchestre la logique de jeu, les collisions,
- * les obstacles et la physique des voitures.
+ * les obstacles, la physique des voitures et le système de vitesse dynamique.
  */
 public class GameEngine {
     private GameState gameState;
@@ -19,6 +21,11 @@ public class GameEngine {
     private List<Car> enemies;
     private double gameSpeed;
     private double gravity = 0.5; // Accélération due à la gravité
+
+    // Système de score et vitesse dynamique
+    private Score currentScore;
+    private DynamicSpeedSystem speedSystem;
+    private boolean playerAccelerating = false;
 
     private int screenWidth;
     private int screenHeight;
@@ -37,6 +44,8 @@ public class GameEngine {
 
         this.collisionManager = new CollisionManager();
         this.obstacleManager = new ObstacleManager(screenWidth, screenHeight, difficulty);
+        this.currentScore = new Score();
+        this.speedSystem = new DynamicSpeedSystem(100, 800); // baseSpeed=100, maxSpeed=800
         this.lastUpdate = System.currentTimeMillis();
     }
 
@@ -50,9 +59,9 @@ public class GameEngine {
         deltaTime = (now - lastUpdate) / 1000.0;
         lastUpdate = now;
 
-        // Augmente la vitesse du jeu progressivement
-        gameSpeed += gravity * deltaTime;
-        gameSpeed = Math.min(gameSpeed, 800); // Cap à 800
+        // Mise à jour du système de vitesse dynamique
+        speedSystem.update(currentScore.getScoreInt(), playerAccelerating);
+        gameSpeed = speedSystem.getCurrentGameSpeed();
 
         // Met à jour le joueur
         if (player != null) {
@@ -69,6 +78,11 @@ public class GameEngine {
                 obstacles.remove(0);
             }
         }
+
+        // Mise à jour du score : distance parcourue + bonus vitesse
+        double distanceThisFrame = gameSpeed * deltaTime;
+        currentScore.addDistance(distanceThisFrame);
+        currentScore.addSpeedBonus(gameSpeed);
     }
 
     /**
@@ -77,6 +91,7 @@ public class GameEngine {
     public boolean checkObstacleCollisions(PlayerCar player) {
         for (Obstacle obstacle : obstacleManager.getObstacles()) {
             if (collisionManager.isColliding(player, obstacle)) {
+                currentScore.applyCollisionPenalty();
                 return true;
             }
         }
@@ -112,10 +127,17 @@ public class GameEngine {
         return collisionManager;
     }
 
+    public Score getCurrentScore() { return currentScore; }
+    public DynamicSpeedSystem getSpeedSystem() { return speedSystem; }
+    public void setPlayerAccelerating(boolean accelerating) { playerAccelerating = accelerating; }
+
     public void reset() {
         gameSpeed = 0;
         gameState = GameState.RUNNING;
+        currentScore.reset();
+        speedSystem.reset();
         obstacleManager.clear();
+        playerAccelerating = false;
     }
 
     public void pause() {

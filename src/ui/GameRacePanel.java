@@ -140,6 +140,11 @@ public class GameRacePanel extends JPanel {
         if (keysPressed.contains(KeyEvent.VK_RIGHT) || keysPressed.contains(KeyEvent.VK_D)) {
             player.moveRight(LANE_WIDTH, WIDTH);
         }
+        
+        // Retour au centre avec ESPACE
+        if (keysPressed.contains(KeyEvent.VK_SPACE)) {
+            player.resetLane();
+        }
 
         // Accélération / Frein (optionnel)
         if (keysPressed.contains(KeyEvent.VK_UP) || keysPressed.contains(KeyEvent.VK_W) ||

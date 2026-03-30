@@ -103,7 +103,7 @@ public class GamePanel extends JPanel {
 
         if (mode != Mode.ONE_PLAYER) {
             boolean ai = mode == Mode.TWO_PLAYERS_AI;
-            player2 = new PlayerCar2("Red", ai);
+            player2 = new PlayerCar2("Red");
             difficulty.applyToCar(player2);
             player2.reset();
             player2.resetLane();
@@ -240,9 +240,9 @@ public class GamePanel extends JPanel {
             obs.update(deltaTime, worldSpeed);
             if (obs.isOutOfBounds(HEIGHT)) {
                 iterator.remove();
-                score.ajouterPoints(10);
-                scoreP1.ajouterPoints(10);
-                if (scoreP2 != null) scoreP2.ajouterPoints(10);
+                score.addBonusPoints(10);
+                scoreP1.addBonusPoints(10);
+                if (scoreP2 != null) scoreP2.addBonusPoints(10);
             }
 
             if (checkCollision(player1, obs)) {
@@ -275,9 +275,7 @@ public class GamePanel extends JPanel {
         gameOver = true;
         paused = false;
 
-        score.finDePartie();
-        scoreP1.finDePartie();
-        if (player2 != null) scoreP2.finDePartie();
+        // Score automatiquement mis à jour à travers updateBestScore()
 
         System.out.println("Game over: " + reason);
     }
@@ -308,9 +306,9 @@ public class GamePanel extends JPanel {
     private void resetGame() {
         initPlayers();
         obstacles.clear();
-        score.reinitialiser();
-        scoreP1.reinitialiser();
-        if (scoreP2 != null) scoreP2.reinitialiser();
+        score.reset();
+        scoreP1.reset();
+        if (scoreP2 != null) scoreP2.reset();
         gameOver = false;
         paused = false;
         startCountdown();
@@ -432,9 +430,9 @@ public class GamePanel extends JPanel {
         g2.setFont(new Font("Arial", Font.BOLD, 16));
         if (mode == Mode.ONE_PLAYER) {
             g2.drawString("Score: " + (int) player1.getDistanceTraveled(), 20, 30);
-            g2.drawString("Record: " + score.getMeilleurScore(), 20, 60);
-            g2.drawString("Parties: " + score.getPartiesJouees(), 20, 90);
-            g2.drawString(String.format("Moyenne: %.1f", score.getScoreMoyen()), 20, 120);
+            g2.drawString("Record: " + (int) score.getBestScore(), 20, 60);
+            g2.drawString("Bonus: " + score.getBonusScore(), 20, 90);
+            g2.drawString("Total: " + score.getTotalScore(), 20, 120);
         } else {
             g2.drawString("P1: " + (int) player1.getDistanceTraveled(), 20, 30);
             g2.drawString("P2: " + (int) player2.getDistanceTraveled(), 20, 60);

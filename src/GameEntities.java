@@ -1,55 +1,7 @@
 import java.awt.*;
 
 /**
- * Classe représentant le joueur
- */
-class PlayerCar {
-    public double x;
-    public double y;
-    public double speed = 0;
-    public int lane = 1; // 0, 1, 2
-
-    private static final int LANE_WIDTH = 300;
-    private static final int WIDTH = 1000;
-    private static final int HEIGHT = 700;
-    private static final double MAX_SPEED = 10;
-    private static final double ACCELERATION = 0.3;
-    private static final double FRICTION = 0.95;
-
-    public PlayerCar() {
-        this.x = WIDTH / 2;
-        this.y = HEIGHT - 150;
-    }
-
-    public void moveLeft() {
-        if (lane > 0) lane--;
-        updateX();
-    }
-
-    public void moveRight() {
-        if (lane < 2) lane++;
-        updateX();
-    }
-
-    public void accelerate() {
-        speed = Math.min(speed + ACCELERATION, MAX_SPEED);
-    }
-
-    public void brake() {
-        speed = Math.max(speed - ACCELERATION * 1.5, 0);
-    }
-
-    public void updateSpeed(int gameSpeed) {
-        speed *= FRICTION;
-    }
-
-    private void updateX() {
-        x = lane * LANE_WIDTH + LANE_WIDTH / 2;
-    }
-}
-
-/**
- * Classe représentant les obstacles
+ * Classe représentant les obstacles (vieux code - non utilisé, voir model/obstacle/)
  */
 class Enemy {
     public double x;
@@ -71,7 +23,7 @@ class Enemy {
 }
 
 /**
- * Classe représentant les power-ups
+ * Classe représentant les power-ups (vieux code - non utilisé)
  */
 class PowerUp {
     public double x, y;
