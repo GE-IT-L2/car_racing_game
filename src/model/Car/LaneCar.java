@@ -1,4 +1,4 @@
-package model.car;
+package model.Car;
 
 /**
  * Classe abstraite représentant une voiture circulant sur des voies fixes.
