@@ -1,12 +1,12 @@
 package engine;
 
-import model.obstacle.Obstacle;
-import model.obstacle.ObstacleFixe;
-import model.obstacle.ObstacleMobile;
-import model.Difficulty.Difficulty;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import model.Difficulty.Difficulty;
+import model.obstacle.Obstacle;
+import model.obstacle.ObstacleFixe;
+import model.obstacle.ObstacleMobile;
 
 public class ObstacleManager {
 
@@ -28,7 +28,7 @@ public class ObstacleManager {
         timer += deltaTime;
 
         double intervalle = switch (difficulty.getName().toLowerCase()) {
-            case "hard"   -> 1.5;
+            case "hard"   -> 10.5;
             case "medium" -> 2.5;
             default       -> 3.5;
         };
